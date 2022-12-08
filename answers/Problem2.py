@@ -8,21 +8,33 @@ conn = psycopg2.connect(database="postgres", user="postgres", password="BlueSky@
 
 cursor = conn.cursor()
 cursor.execute('set search_path="myinterview";')
-
+weather_station = []
 # Queries
-postgres_weather_insert_query = 'INSERT INTO weather_data_records("date_of_day","max_temp_degc","min_temp_degc","amnt_precipation_cm") VALUES (%s,%s,%s,%s) ON CONFLICT (date_of_day) DO NOTHING;'
+postgres_weather_insert_query = 'INSERT INTO weather_data_records("date_of_day","max_temp_degc","min_temp_degc","amnt_precipation_mm", "weather_station") VALUES (%s,%s,%s,%s,%s) ON CONFLICT (date_of_day) DO NOTHING;'
 postgres_yield_insert_query = 'INSERT INTO yield_data_records("year","total_harvest_corn_mt") VALUES (%s,%s) ON CONFLICT (year) DO NOTHING;'
 
 totalRecords = 0
 print("Start time: {}".format(datetime.datetime.now()))
 
 
+def read_copy_txt_file_name(path, query, fn):
+    with open(path, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            data = line.split()
+            data.append(fn)
+            cursor.execute(query, data)
+            global totalRecords
+            totalRecords += 1
+    f.close()
+
+
 def read_copy_txt_file(path, query):
     with open(path, 'r') as f:
         lines = f.readlines()
         for line in lines:
-            split = line.split()
-            cursor.execute(query, split)
+            data = line.split()
+            cursor.execute(query, data)
             global totalRecords
             totalRecords += 1
     f.close()
@@ -31,8 +43,10 @@ def read_copy_txt_file(path, query):
 for txtfile in os.listdir(path='../wx_data'):
     if txtfile.endswith(".txt"):
         file_path = f"{os.getcwd()}/../wx_data/{txtfile}"
-        read_copy_txt_file(file_path, postgres_weather_insert_query)
+        f_name = os.path.basename(file_path).split('/')[-1][0:-4]
+        read_copy_txt_file_name(file_path, postgres_weather_insert_query, f_name)
         print("File {} is loaded.".format(txtfile))
+
 
 for txtfile in os.listdir(path='../yld_data'):
     if txtfile.endswith(".txt"):
@@ -48,7 +62,8 @@ conn.close()
 
 
 # Output
-# Start time: 2022-12-08 06:49:37.405974
+# (venv) chandu@Gautams-MBP answers % python3 Problem2.py
+# Start time: 2022-12-08 09:00:23.591571
 # File USC00257715.txt is loaded.
 # File USC00113879.txt is loaded.
 # File USC00127935.txt is loaded.
@@ -216,5 +231,5 @@ conn.close()
 # File USC00331890.txt is loaded.
 # File USC00254985.txt is loaded.
 # File USC00259090.txt is loaded.
-# End time: 2022-12-08 07:24:10.716588
+# End time: 2022-12-08 09:34:21.756141
 # Total Records: 1729987
