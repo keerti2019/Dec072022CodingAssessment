@@ -10,7 +10,7 @@ cursor = conn.cursor()
 cursor.execute('set search_path="myinterview";')
 weather_station = []
 # Queries
-postgres_weather_insert_query = 'INSERT INTO weather_data_records("date_of_day","max_temp_degc","min_temp_degc","amnt_precipation_mm", "weather_station") VALUES (%s,%s,%s,%s,%s) ON CONFLICT (date_of_day) DO NOTHING;'
+postgres_weather_insert_query = 'INSERT INTO weather_data_records("date_of_day","max_temp_degc","min_temp_degc","amnt_precipation_mm", "weather_station") VALUES (%s,%s,%s,%s,%s) ON CONFLICT (date_of_day, weather_station) DO NOTHING;'
 postgres_yield_insert_query = 'INSERT INTO yield_data_records("year","total_harvest_corn_mt") VALUES (%s,%s) ON CONFLICT (year) DO NOTHING;'
 
 totalRecords = 0
@@ -44,8 +44,10 @@ for txtfile in os.listdir(path='../wx_data'):
     if txtfile.endswith(".txt"):
         file_path = f"{os.getcwd()}/../wx_data/{txtfile}"
         f_name = os.path.basename(file_path).split('/')[-1][0:-4]
+
         read_copy_txt_file_name(file_path, postgres_weather_insert_query, f_name)
         print("File {} is loaded.".format(txtfile))
+
 
 
 for txtfile in os.listdir(path='../yld_data'):
@@ -63,7 +65,7 @@ conn.close()
 
 # Output
 # (venv) chandu@Gautams-MBP answers % python3 Problem2.py
-# Start time: 2022-12-08 09:00:23.591571
+# Start time: 2022-12-08 14:54:14.366097
 # File USC00257715.txt is loaded.
 # File USC00113879.txt is loaded.
 # File USC00127935.txt is loaded.
@@ -231,5 +233,6 @@ conn.close()
 # File USC00331890.txt is loaded.
 # File USC00254985.txt is loaded.
 # File USC00259090.txt is loaded.
-# End time: 2022-12-08 09:34:21.756141
+# End time: 2022-12-08 16:24:11.170293
 # Total Records: 1729987
+
