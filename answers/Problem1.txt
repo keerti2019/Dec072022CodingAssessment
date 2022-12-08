@@ -3,5 +3,5 @@ ALTER SCHEMA myinterview OWNER TO postgres;
 
 set search_path = myinterview;
 
-create table myinterview.weather_data_records(date_of_day DATE primary key, max_temp_degC decimal, min_temp_degC decimal, amnt_precipation_cm decimal);
+create table myinterview.weather_data_records(date_of_day DATE primary key, max_temp_degC decimal, min_temp_degC decimal, amnt_precipation_mm decimal, weather_station varchar(150));
 create table myinterview.yield_data_records(year int primary key, total_harvest_corn_Mt decimal);
