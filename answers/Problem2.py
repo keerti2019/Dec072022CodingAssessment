@@ -2,22 +2,30 @@ import psycopg2
 import os
 import datetime
 
-
-conn = psycopg2.connect(database="postgres", user="postgres", password="BlueSky@143", host="127.0.0.1",
+# This program reads the data for weather and yield and inserts them to POSTGRES on local system
+# When inserting data, to support duplicate data insertion, we use "ON CONFLICT DO NOTHING"
+#   i.e. we do not change existing data in database.
+# Program prints the stats about start and end time, and total records added to database.
+# Connect to local POSTGRES
+conn = psycopg2.connect(database="postgres",
+                        user="postgres",
+                        password="BlueSky@143",
+                        host="127.0.0.1",
                         port="8002")
 
 cursor = conn.cursor()
 cursor.execute('set search_path="myinterview";')
-weather_station = []
-# Queries
+
+# Queries to insert data
 postgres_weather_insert_query = 'INSERT INTO weather_data_records("date_of_day","max_temp_degc","min_temp_degc","amnt_precipation_mm", "weather_station") VALUES (%s,%s,%s,%s,%s) ON CONFLICT (date_of_day, weather_station) DO NOTHING;'
 postgres_yield_insert_query = 'INSERT INTO yield_data_records("year","total_harvest_corn_mt") VALUES (%s,%s) ON CONFLICT (year) DO NOTHING;'
 
+# To track the number of records inserted
 totalRecords = 0
 print("Start time: {}".format(datetime.datetime.now()))
 
 
-def read_copy_txt_file_name(path, query, fn):
+def load_weather_data(path, query, fn):
     with open(path, 'r') as f:
         lines = f.readlines()
         for line in lines:
@@ -29,7 +37,7 @@ def read_copy_txt_file_name(path, query, fn):
     f.close()
 
 
-def read_copy_txt_file(path, query):
+def load_yield_data(path, query):
     with open(path, 'r') as f:
         lines = f.readlines()
         for line in lines:
@@ -40,20 +48,18 @@ def read_copy_txt_file(path, query):
     f.close()
 
 
-for txtfile in os.listdir(path='../wx_data'):
-    if txtfile.endswith(".txt"):
-        file_path = f"{os.getcwd()}/../wx_data/{txtfile}"
+for weatherDataFile in os.listdir(path='../wx_data'):
+    if weatherDataFile.endswith(".txt"):
+        file_path = f"{os.getcwd()}/../wx_data/{weatherDataFile}"
         f_name = os.path.basename(file_path).split('/')[-1][0:-4]
 
-        read_copy_txt_file_name(file_path, postgres_weather_insert_query, f_name)
-        print("File {} is loaded.".format(txtfile))
+        load_weather_data(file_path, postgres_weather_insert_query, f_name)
+        print("File {} is loaded.".format(weatherDataFile))
 
-
-
-for txtfile in os.listdir(path='../yld_data'):
-    if txtfile.endswith(".txt"):
-        file_path = f"{os.getcwd()}/../yld_data/{txtfile}"
-        read_copy_txt_file(file_path, postgres_yield_insert_query)
+for yieldDataFile in os.listdir(path='../yld_data'):
+    if yieldDataFile.endswith(".txt"):
+        file_path = f"{os.getcwd()}/../yld_data/{yieldDataFile}"
+        load_yield_data(file_path, postgres_yield_insert_query)
 
 print("End time: {}".format(datetime.datetime.now()))
 print("Total Records: {}".format(totalRecords))
@@ -61,7 +67,6 @@ print("Total Records: {}".format(totalRecords))
 conn.commit()
 cursor.close()
 conn.close()
-
 
 # Output
 # (venv) chandu@Gautams-MBP answers % python3 Problem2.py
@@ -235,4 +240,3 @@ conn.close()
 # File USC00259090.txt is loaded.
 # End time: 2022-12-08 16:24:11.170293
 # Total Records: 1729987
-
