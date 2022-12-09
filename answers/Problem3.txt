@@ -1,8 +1,22 @@
+UPDATE myinterview.weather_data_records SET max_temp_degC = NULL WHERE max_temp_degC = -9999
+UPDATE myinterview.weather_data_records SET amnt_precipation_mm  = NULL WHERE amnt_precipation_mm  = -9999
+UPDATE myinterview.weather_data_records SET min_temp_degc  = NULL WHERE min_temp_degc  = -9999
+
+
 CREATE TABLE myinterview.data_analysis(yr int, station_id varchar(200),
                                        avg_max_temp decimal, avg_min_temp decimal,
                                        accum_preciptn decimal, primary key(yr, station_id));
 
 INSERT INTO myinterview.data_analysis(yr, station_id, avg_max_temp, avg_min_temp, accum_preciptn)
-(SELECT EXTRACT(year from date_of_day) yr, wdr.weather_station, avg(wdr.max_temp_degC/10, avg(wdr.min_temp_degc/10),
+(SELECT EXTRACT(year FROM date_of_day) yr, wdr.weather_station, avg(wdr.max_temp_degC/10), avg(wdr.min_temp_degc/10),
  avg(wdr.amnt_precipation_mm/100) FROM weather_data_records wdr GROUP BY wdr.weather_station,yr);
+
+
+
+--SELECT AVG(wdr.amnt_precipation_mm/100) avg_precipation,AVG(wdr.max_temp_degc/10) avg_max_temp,
+ AVG(wdr.min_temp_degc/10) avg_min_temp,date_trunc('year', wdr.date_of_day)
+ FROM weather_data_records wdr
+ GROUP BY wdr.weather_station,date_trunc('year', wdr.date_of_day)
+
+
 
