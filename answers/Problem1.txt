@@ -1,7 +1,17 @@
+-- CREATING DATA MODEL for PROBLEM
+
+-- Create Schema in POSTGRESQL
 CREATE SCHEMA if not exists myinterview;
+
+-- SET OWNER FOR SCHEMA
 ALTER SCHEMA myinterview OWNER TO postgres;
 
+-- SET DEFAULT SEARCH PATH
 set search_path = myinterview;
 
-create table myinterview.weather_data_records(date_of_day DATE primary key, max_temp_degC decimal, min_temp_degC decimal, amnt_precipation_mm decimal, weather_station varchar(150));
+-- CREATE TABLES
+-- WEATHER DATA is unique per weather station and date. Hence, we need a composite primary key composed of these two fields (PRIMARY KEY(date_of_day, weather_station)).
+create table myinterview.weather_data_records(date_of_day DATE, max_temp_degC decimal, min_temp_degC decimal, amnt_precipation_mm decimal, weather_station varchar(150), PRIMARY KEY(date_of_day, weather_station));
+
+-- YIELD DATA can be just indexed by year
 create table myinterview.yield_data_records(year int primary key, total_harvest_corn_Mt decimal);
