@@ -3,7 +3,7 @@ from . import views
 
 urlpatterns = [
     path("weather/", views.GetAllWeatherRecords.as_view()),
-    path("yield/", views.yield_data, name='yield_data'),
+    path("yield/", views.GetAllYieldData.as_view()),
     path("weather/stats/", views.stats),
 ]
 

@@ -22,7 +22,7 @@ class WeatherDataRecords(models.Model):
 
 class YieldDataRecords(models.Model):
     year = models.IntegerField(primary_key=True)
-    total_harvest_corn_mt = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    total_harvest_corn_mt = models.DecimalField(max_digits=65535, decimal_places=300, blank=True, null=True)
 
     class Meta:
         managed = False

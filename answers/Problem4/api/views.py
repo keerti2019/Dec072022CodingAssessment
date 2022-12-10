@@ -15,6 +15,10 @@ class GetAllWeatherRecords(ListAPIView):
     queryset = WeatherDataRecords.objects.all().order_by('date_of_day')[:10]
     serializer_class = WeatherDataRecordSerializer
 
+class GetAllYieldData(ListAPIView):
+    queryset = YieldDataRecords.objects.all()
+    serializer_class = YieldDataRecordSerializer
+
 
 def weather(request):
     conn = psycopg2.connect(database="postgres", user="postgres", password="BlueSky@143", host="127.0.0.1",
