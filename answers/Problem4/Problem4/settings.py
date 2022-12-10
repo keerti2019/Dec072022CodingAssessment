@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+# import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -27,8 +27,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
-# Application definition
+# PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+# STATIC_URL = '/static/'
+# STATIC_ROOT = os.path.join(PROJECT_ROOT, STATIC_URL)
+#
+# # Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -44,6 +47,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -78,7 +82,7 @@ WSGI_APPLICATION = 'Problem4.wsgi.application'
 DATABASE_ROUTERS = ['Problem4.dbrouters.AppRouter']
 
 DATABASES = {
-    'default' : {
+    'default': {
            'ENGINE': 'django.db.backends.postgresql_psycopg2'
           ,'NAME':'postgres'
           ,'USER':'postgres'
@@ -87,7 +91,7 @@ DATABASES = {
           ,'PORT':'8002'
           ,'OPTIONS': {'options': '-c search_path=public'}
         },
-    'MYINTERVIEW' : {
+    'MYINTERVIEW': {
        'ENGINE': 'django.db.backends.postgresql_psycopg2'
       ,'NAME':'postgres'
       ,'USER':'postgres'
@@ -139,3 +143,16 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ]
+}
+# IsAuthenticated
+
+
+
