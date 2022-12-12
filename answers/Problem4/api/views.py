@@ -11,13 +11,21 @@ import psycopg2
 from .serializer import *
 
 
-class GetAllWeatherRecords(ListAPIView):
-    queryset = WeatherDataRecords.objects.all().order_by('date_of_day')[:10]
+# class GetAllWeatherRecords1(ListAPIView):
+#     queryset = WeatherDataRecords.objects.all().order_by('date_of_day')[:10]
+#     serializer_class = WeatherDataRecordSerializer
+
+
+class GetAllWeatherRecords(generics.ListAPIView):
     serializer_class = WeatherDataRecordSerializer
+
+    def get_queryset(self):
+        username = self.kwargs['date_of_day']
+        station = self.kwargs['weather_station']
+        return WeatherDataRecords.objects.filter(date_of_day=username, weather_station=station).only('date_of_day', 'max_temp_degc', 'min_temp_degc', 'amnt_precipation_mm', 'weather_station')
 
 
 class GetAllYieldData(generics.ListAPIView):
-    queryset = YieldDataRecords.objects.all()
     serializer_class = YieldDataRecordSerializer
 
     def get_queryset(self):
