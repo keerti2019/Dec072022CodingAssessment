@@ -27,3 +27,16 @@ class YieldDataRecords(models.Model):
     class Meta:
         managed = False
         db_table = 'yield_data_records'
+
+
+class DataAnalysis(models.Model):
+    yr = models.IntegerField(primary_key=True)
+    station_id = models.CharField(max_length=200)
+    avg_max_temp = models.DecimalField(max_digits=65535, decimal_places=300, blank=True, null=True)
+    avg_min_temp = models.DecimalField(max_digits=65535, decimal_places=300, blank=True, null=True)
+    accum_preciptn = models.DecimalField(max_digits=65535, decimal_places=300, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'data_analysis'
+        unique_together = (('yr', 'station_id'),)

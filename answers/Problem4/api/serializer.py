@@ -14,3 +14,8 @@ class YieldDataRecordSerializer(serializers.ModelSerializer):
         fields = ['year', 'total_harvest_corn_mt']
 
 
+class DataAnalysisSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DataAnalysis
+        fields = ['yr', 'station_id', 'avg_max_temp', 'avg_min_temp', 'accum_preciptn']
+
