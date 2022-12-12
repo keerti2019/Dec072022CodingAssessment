@@ -1,6 +1,6 @@
 from django.db import connections
 from django.shortcuts import render
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -8,33 +8,28 @@ from rest_framework.generics import RetrieveAPIView, ListAPIView, CreateAPIView,
 from django.http import HttpResponse, JsonResponse
 from .data_records import WeatherDataRecords, YieldDataRecords
 import psycopg2
-from .serializer import WeatherDataRecordSerializer, YieldDataRecordSerializer
+from .serializer import *
 
 
 class GetAllWeatherRecords(ListAPIView):
-
     queryset = WeatherDataRecords.objects.all().order_by('date_of_day')[:10]
     serializer_class = WeatherDataRecordSerializer
 
 
-class GetAllYieldData(ListAPIView):
+class GetAllYieldData(generics.ListAPIView):
     queryset = YieldDataRecords.objects.all()
     serializer_class = YieldDataRecordSerializer
 
+    def get_queryset(self):
+        username = self.kwargs['year']
+        return YieldDataRecords.objects.filter(year=username).only('year', 'total_harvest_corn_mt')
 
-def weather(request, req_year, weather_station_id):
-    # text = weather_station_id.upper()
-    # print(weather_station_id.upper())
-    with connections['MYINTERVIEW'].cursor() as cursor:
-        print('select * from data_analysis da where da.yr = {0} and da.station_id = {1};'.format(req_year, weather_station_id))
-        cursor.execute("select * from data_analysis da where da.yr = '{0}' and da.station_id = '{1}';".format(req_year, weather_station_id))
-        # cursor.execute("select * from myinterview.data_analysis da where da.yr = '1985' and da.station_id ='USC00121873'")
-        result1 = cursor.fetchone()
 
-    return JsonResponse(result1)
+class WeatherStats(generics.ListAPIView):
+    serializer_class = DataAnalysisSerializer
 
-def yield_data(request):
-    return JsonResponse({'data':'corn_harvest_in_US'})
+    def get_queryset(self):
+        username = self.kwargs['yr']
+        station = self.kwargs['station_id']
+        return DataAnalysis.objects.filter(yr=username, station_id=station).only('yr', 'station_id', 'avg_max_temp', 'avg_min_temp', 'accum_preciptn')
 
-def stats(request):
-    return JsonResponse({'data':'stats'})
