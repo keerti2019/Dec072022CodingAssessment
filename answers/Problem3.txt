@@ -1,3 +1,4 @@
+--
 UPDATE myinterview.weather_data_records SET max_temp_degC = NULL WHERE max_temp_degC = -9999
 UPDATE myinterview.weather_data_records SET amnt_precipation_mm  = NULL WHERE amnt_precipation_mm  = -9999
 UPDATE myinterview.weather_data_records SET min_temp_degc  = NULL WHERE min_temp_degc  = -9999
