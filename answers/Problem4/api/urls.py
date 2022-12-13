@@ -4,16 +4,23 @@ from . import views
 urlpatterns = [
     path("weather/<str:date_of_day>/<str:weather_station>", views.GetAllWeatherRecords.as_view()),
     path("yield/<str:year>", views.GetAllYieldData.as_view()),
-    path("weather/stats/<str:yr>/<str:station_id>",views.WeatherStats.as_view()),
+    path("weather/stats", views.WeatherStats.as_view()),
 
 ]
 
 # testurls
+#
 # http://127.0.0.1:8000/api/weather/1985-01-01/USC00257715
 # date_of_day ranges from 1985-01-01 to 2014-12-31 (YYYY-MM-DD)
 # http://127.0.0.1:8000/api/yield/1985
 # year ranges from 1985-2014
-# http://127.0.0.1:8000/api/weather/stats/1985/USC00121873
+# Weather statistics--added pagination
+# http://127.0.0.1:8000/api/weather/stats?start=0&end=60
+# http://127.0.0.1:8000/api/weather/stats?start=0&end=60&req_yr=1985
+# http://127.0.0.1:8000/api/weather/stats?start=0&end=60&station=USC00121873
+# http://127.0.0.1:8000/api/weather/stats?start=0&end=60&req_yr=1985&station=USC00121873
+
+#
 # year ranges from 1985-2014/
 # station_ids are given by
 # USC00257715
